@@ -24,7 +24,7 @@ function _fifc
     set -gx fifc_group (_fifc_completion_group)
     set source_cmd (_fifc_action source)
 
-    set fifc_fzf_query (string trim --chars '\'' -- "$fifc_fzf_query")
+    set fifc_fzf_query (string trim --chars '\'' -- "$fifc_query")
 
     set -l fzf_cmd "
         fzf \
@@ -40,7 +40,7 @@ function _fifc
             --header '$header' \
             --preview '_fifc_action preview {} {q}' \
             --bind='$fifc_open_keybinding:execute(_fifc_action open {} {q} &> /dev/tty)' \
-            --query '$fifc_query' \
+            --query '$fifc_fzf_query' \
             $_fifc_custom_fzf_opts"
 
     set -l cmd (string join -- " | " $source_cmd $fzf_cmd)
