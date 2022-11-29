@@ -1,6 +1,6 @@
 function _fifc
     set -l result
-    set -Ux _fifc_extract_regex
+    set -gx _fifc_extract_regex
     set -gx _fifc_complist_path (string join '' (mktemp) "_fifc")
     set -gx _fifc_custom_fzf_opts
     set -gx fifc_extracted

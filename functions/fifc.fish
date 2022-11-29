@@ -38,7 +38,7 @@ function fifc -d "Add your own fish fzf completions"
 
     set _fifc_comp_count (math $_fifc_comp_count + 1)
     set -l count $_fifc_comp_count
-    set -Ux "_fifc_comp_$count"
+    set -gx "_fifc_comp_$count"
     set -a "_fifc_comp_$count" "$_flag_n"
     set -a "_fifc_comp_$count" "$_flag_r"
     set -a "_fifc_comp_$count" "$_flag_p"
