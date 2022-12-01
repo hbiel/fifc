@@ -1,25 +1,28 @@
 function _fifc_source_files -d "Return a command to recursively find files"
     set -l path (_fifc_path_to_complete | string escape)
-    set -l hidden (string match "*." "$path")
 
-    if string match --quiet -- '~*' "$fifc_query"
+    set -l potential_path (string match -r -g '(.*\/)?(?:.*)' $path)
+    set -l potential_query (string match -r -g '(?:.*\/)?(.*)' $path)
+    set -l hidden (string match ".*" "$potential_query")
+
+    if test -d $path -a -z "$hidden"
         set -e fifc_query
+    else
+        set path $potential_path
+        set fifc_query $potential_query
     end
 
     if type -q fd
-        if _fifc_test_version (fd --version) -ge "8.3.0"
-            set fd_custom_opts --strip-cwd-prefix
+        set -l fd_opts "--color=always" $fifc_fd_opts
+
+        test -n "$hidden" && set -a fd_opts "--hidden"
+        if test "$path" = "$PWD/"
+            _fifc_test_version (fd --version) -ge "8.3.0" && set -a fd_opts --strip-cwd-prefix
+        else if test -n "$path" 
+            set -a fd_opts "--" "$path"
         end
 
-        if test "$path" = {$PWD}/
-            echo "fd . --color=always $fd_custom_opts $fifc_fd_opts"
-        else if test "$path" = "."
-            echo "fd . --color=always --hidden $fd_custom_opts $fifc_fd_opts"
-        else if test -n "$hidden"
-            echo "fd . --color=always --hidden $fifc_fd_opts -- $path"
-        else
-            echo "fd . --color=always $fifc_fd_opts -- $path"
-        end
+        echo "fd . $fd_opts"
     else if test -n "$hidden"
         # Use sed to strip cwd prefix
         echo "find . $path ! -path . -print $fifc_find_opts 2>/dev/null | sed 's|^\./||'"
