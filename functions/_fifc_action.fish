@@ -7,9 +7,9 @@ function _fifc_action
     set regex_val (string replace '/' '\/' --all "$regex_val")
 
     # Variables exposed to evaluated commands
-    set -x fifc_desc (sed -nr (printf -- 's/^%s[[:blank:]]+(.*)/\\\1/p' "$regex_val") $_fifc_complist_path | string trim)
-    set -x fifc_candidate "$argv[2]"
     set -x fifc_extracted (string match --regex --groups-only -- "$_fifc_extract_regex" "$argv[2]")
+    set -x fifc_candidate "$fifc_extracted[1]"
+    set -x fifc_desc "$fifc_extracted[2]"
 
     if test "$action" = preview
         set default_preview 1
@@ -20,6 +20,9 @@ function _fifc_action
 
     else if test "$action" = source
         set default_source 1
+
+    else if test "$action" = extract
+        set default_extract 1
     end
 
     for i in (seq (count $comp))
@@ -43,7 +46,6 @@ function _fifc_action
             continue
         end
 
-        set _fifc_extract_regex "$$comp[$i][7]"
 
         if test "$action" = preview; and test -n "$$comp[$i][3]"
             eval $$comp[$i][3]
@@ -61,6 +63,10 @@ function _fifc_action
             end
             set default_source 0
             break
+        else if test "$action" = extract; and test -n "$$comp[$i][7]"
+            echo "$$comp[$i][7]"
+            set default_extract 0
+            break
         end
     end
 
@@ -70,5 +76,7 @@ function _fifc_action
         echo "$fifc_desc"
     else if test "$default_source" = 1
         echo _fifc_parse_complist
+    else if test "$default_extract" = 1
+        echo "^(\S+)(?:\t(\N+))?"
     end
 end
