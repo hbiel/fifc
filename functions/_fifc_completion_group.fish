@@ -16,7 +16,7 @@ function _fifc_completion_group -d "Determine completion group"
     else if string match --regex --quiet -- '\h+\-+\h*$' $fifc_commandline
         set -e fifc_query
         echo options
-    else if string join -- '' (string escape -- $complist) | string match --regex --quiet '^[0-9]+$'
+    else if string match --regex --quiet '^[0-9]+\h' $complist
         echo processes
     end
 end
