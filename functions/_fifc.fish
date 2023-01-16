@@ -7,7 +7,7 @@ function _fifc
     set -gx fifc_commandline
     set -gx fifc_token (commandline --current-token)
     set -gx fifc_query "$fifc_token"
-
+    set -gx _fifc_tabstop 20
     # Get commandline buffer
     if test "$argv" = ""
         set fifc_commandline (commandline --cut-at-cursor)
@@ -35,7 +35,7 @@ function _fifc
             --select-1 \
             --exit-0 \
             --ansi \
-            --tabstop=20 \
+            --tabstop=$_fifc_tabstop \
             --multi \
             --reverse \
             --header '$header' \
