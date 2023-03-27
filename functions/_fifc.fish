@@ -22,6 +22,7 @@ function _fifc
     complete -C $complete_opts -- "$fifc_commandline" | string split '\n' >$_fifc_complist_path
 
     set -gx fifc_group (_fifc_completion_group)
+    set _fifc_extract_regex (_fifc_action extract)
     set source_cmd (_fifc_action source)
 
     set fifc_fzf_query (string trim --chars '\'' -- "$fifc_fzf_query")
@@ -34,7 +35,7 @@ function _fifc
             --select-1 \
             --exit-0 \
             --ansi \
-            --tabstop=4 \
+            --tabstop=20 \
             --multi \
             --reverse \
             --header '$header' \
@@ -56,7 +57,7 @@ function _fifc
         end
         # Perform extraction if needed
         if test -n "$_fifc_extract_regex"
-            set result[-1] (string match --regex --groups-only -- "$_fifc_extract_regex" "$token")
+            set result[-1] (string match --regex --groups-only -- "$_fifc_extract_regex" "$token")[1]
         end
     end
 
